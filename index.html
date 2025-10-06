@@ -7,6 +7,849 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
+
+
+/* new style */
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Sans+Devanagari:wght@400;600;700;800;900&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --accent-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            --gre-gradient: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 50%, #c44569 100%);
+            --ielts-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --sat-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --pte-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --toefl-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            --dark-bg: #0f172a;
+            --card-bg: #ffffff;
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --text-primary: #2d3748;
+            --text-secondary: #4a5568;
+            --border-radius: 24px;
+            --shadow-soft: 0 8px 32px rgba(0, 0, 0, 0.08);
+            --shadow-medium: 0 20px 50px rgba(0, 0, 0, 0.15);
+            --shadow-hard: 0 30px 70px rgba(0, 0, 0, 0.25);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            color: var(--text-primary);
+            overflow: hidden;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        /* Animated Background */
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .gradient-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.6;
+            animation: float-around 20s infinite ease-in-out;
+        }
+
+        .orb-1 {
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, #667eea, transparent);
+            top: -10%;
+            left: -10%;
+            animation-delay: 0s;
+        }
+
+        .orb-2 {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, #f093fb, transparent);
+            bottom: -10%;
+            right: -10%;
+            animation-delay: 7s;
+        }
+
+        .orb-3 {
+            width: 350px;
+            height: 350px;
+            background: radial-gradient(circle, #43e97b, transparent);
+            top: 40%;
+            right: 20%;
+            animation-delay: 14s;
+        }
+
+        @keyframes float-around {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(50px, 50px) scale(1.1); }
+            50% { transform: translate(-30px, 80px) scale(0.9); }
+            75% { transform: translate(80px, -40px) scale(1.05); }
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            z-index: 10000;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--accent-gradient);
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 0%;
+            box-shadow: 0 0 20px rgba(67, 233, 123, 0.6);
+        }
+
+        /* Main Container */
+        .presentation-container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .slide {
+            display: none;
+            padding: 40px;
+            height: calc(100vh - 100px);
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .slide.active {
+            display: block;
+            animation: slideIn 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(40px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* Cards */
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: var(--border-radius);
+            padding: 32px;
+            box-shadow: var(--shadow-soft);
+            transition: all 0.3s ease;
+        }
+
+        .solid-card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 32px;
+            box-shadow: var(--shadow-soft);
+            transition: all 0.3s ease;
+        }
+
+        /* Section Headers */
+        .section-header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .section-badge {
+            display: inline-block;
+            background: var(--primary-gradient);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 800;
+            background: linear-gradient(135deg, #1e293b, #475569);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 16px;
+            line-height: 1.2;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            text-align: center;
+            padding: 40px 0;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            color: white;
+            padding: 8px 24px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .hero-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(3rem, 8vw, 5rem);
+            font-weight: 800;
+            color: white;
+            margin-bottom: 24px;
+            line-height: 1.1;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1.2rem, 3vw, 1.8rem);
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 16px;
+            font-weight: 500;
+        }
+
+        .multilingual-tags {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 24px;
+        }
+
+        .lang-tag {
+            font-family: 'Noto Sans Devanagari', sans-serif;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            color: #fbbf24;
+            padding: 12px 28px;
+            border-radius: 50px;
+            font-size: 1.3rem;
+            font-weight: 800;
+            border: 2px solid rgba(251, 191, 36, 0.3);
+        }
+
+        /* Stats Display */
+        .stats-showcase {
+            background: var(--primary-gradient);
+            border-radius: var(--border-radius);
+            padding: 60px 40px;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            margin: 40px 0;
+        }
+
+        .stats-showcase::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1), transparent 70%);
+            animation: rotate-slow 30s linear infinite;
+        }
+
+        @keyframes rotate-slow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-top: 40px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 4rem;
+            font-weight: 900;
+            margin-bottom: 12px;
+            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            opacity: 0.95;
+            font-weight: 500;
+        }
+
+        /* Exam Showcase Styles - UNIFIED FORMAT */
+        .exam-showcase {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 48px;
+            margin: 40px 0;
+            box-shadow: var(--shadow-medium);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .exam-showcase::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 400px;
+            height: 400px;
+            opacity: 0.08;
+            border-radius: 50%;
+            transform: translate(30%, -30%);
+        }
+
+        /* Different exam types */
+        .exam-showcase.ielts::after { background: var(--ielts-gradient); }
+        .exam-showcase.gre::after { background: var(--gre-gradient); }
+        .exam-showcase.sat::after { background: var(--sat-gradient); }
+        .exam-showcase.pte::after { background: var(--pte-gradient); }
+        .exam-showcase.toefl::after { background: var(--toefl-gradient); }
+
+        .exam-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+            gap: 24px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .exam-title-group {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .exam-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 4rem;
+            font-weight: 900;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 12px;
+            line-height: 1;
+        }
+
+        /* Different gradients for different exams */
+        .exam-showcase.ielts .exam-title { background: var(--ielts-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .exam-showcase.gre .exam-title { background: var(--gre-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .exam-showcase.sat .exam-title { background: var(--sat-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .exam-showcase.pte .exam-title { background: var(--pte-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .exam-showcase.toefl .exam-title { background: var(--toefl-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        .exam-full-name {
+            font-size: 1.4rem;
+            color: var(--text-primary);
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .exam-conducted-by {
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 700;
+        }
+
+        .exam-showcase.ielts .exam-conducted-by { background: rgba(102, 126, 234, 0.1); color: #667eea; }
+        .exam-showcase.gre .exam-conducted-by { background: rgba(196, 69, 105, 0.1); color: #c44569; }
+        .exam-showcase.sat .exam-conducted-by { background: rgba(240, 147, 251, 0.1); color: #f093fb; }
+        .exam-showcase.pte .exam-conducted-by { background: rgba(79, 172, 254, 0.1); color: #4facfe; }
+        .exam-showcase.toefl .exam-conducted-by { background: rgba(67, 233, 123, 0.1); color: #43e97b; }
+
+        .exam-quick-stats {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .exam-quick-stat {
+            padding: 20px 28px;
+            border-radius: 16px;
+            text-align: center;
+            min-width: 140px;
+            border: 2px solid;
+        }
+
+        .exam-showcase.ielts .exam-quick-stat { background: linear-gradient(135deg, #f0f9ff, #e0f2fe); border-color: rgba(102, 126, 234, 0.2); }
+        .exam-showcase.gre .exam-quick-stat { background: linear-gradient(135deg, #fff5f5, #fed7d7); border-color: rgba(196, 69, 105, 0.2); }
+        .exam-showcase.sat .exam-quick-stat { background: linear-gradient(135deg, #fdf4ff, #fae8ff); border-color: rgba(240, 147, 251, 0.2); }
+        .exam-showcase.pte .exam-quick-stat { background: linear-gradient(135deg, #f0f9ff, #e0f2fe); border-color: rgba(79, 172, 254, 0.2); }
+        .exam-showcase.toefl .exam-quick-stat { background: linear-gradient(135deg, #f0fdf4, #dcfce7); border-color: rgba(67, 233, 123, 0.2); }
+
+        .exam-quick-stat-number {
+            font-size: 2.2rem;
+            font-weight: 900;
+            display: block;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .exam-showcase.ielts .exam-quick-stat-number { color: #667eea; }
+        .exam-showcase.gre .exam-quick-stat-number { color: #c44569; }
+        .exam-showcase.sat .exam-quick-stat-number { color: #f093fb; }
+        .exam-showcase.pte .exam-quick-stat-number { color: #4facfe; }
+        .exam-showcase.toefl .exam-quick-stat-number { color: #43e97b; }
+
+        .exam-quick-stat-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-top: 6px;
+            font-weight: 600;
+        }
+
+        .exam-structure {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            position: relative;
+            z-index: 1;
+            margin-top: 28px;
+        }
+
+        /* Modern Card System */
+        .exam-structure-card,
+        .modern-card {
+            padding: 24px;
+            border-radius: 16px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .exam-structure-card:nth-child(1),
+        .modern-card.color-1 { 
+            background: linear-gradient(135deg, #fff5f7, #ffe4e9);
+            border-left: 4px solid #ff6b6b;
+        }
+        
+        .exam-structure-card:nth-child(2),
+        .modern-card.color-2 { 
+            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+            border-left: 4px solid #3b82f6;
+        }
+        
+        .exam-structure-card:nth-child(3),
+        .modern-card.color-3 { 
+            background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+            border-left: 4px solid #22c55e;
+        }
+
+        .exam-structure-card:nth-child(4),
+        .modern-card.color-4 { 
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            border-left: 4px solid #f59e0b;
+        }
+
+        .modern-card.color-5 { 
+            background: linear-gradient(135deg, #ede9fe, #ddd6fe);
+            border-left: 4px solid #a855f7;
+        }
+
+        .modern-card.color-6 { 
+            background: linear-gradient(135deg, #ffedd5, #fed7aa);
+            border-left: 4px solid #f97316;
+        }
+
+        .exam-structure-card:hover,
+        .modern-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+            border-left-width: 5px;
+        }
+
+        .exam-structure-icon,
+        .modern-card-icon {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-bottom: 12px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+        }
+
+        .exam-structure-title,
+        .modern-card-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .exam-structure-details,
+        .modern-card-details {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        .exam-structure-details strong,
+        .modern-card-details strong {
+            color: var(--text-primary);
+            font-weight: 700;
+        }
+
+        /* CTA Styles */
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 18px 36px;
+            border-radius: 50px;
+            font-size: 1.15rem;
+            font-weight: 700;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.5);
+        }
+
+        .cta-button:hover::before {
+            left: 100%;
+        }
+
+        .cta-demo-section {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3730a3 50%, #6b21a8 100%);
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            color: white;
+            margin: 32px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-demo-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1), transparent 60%);
+            animation: rotate-slow 20s linear infinite;
+        }
+
+        .cta-demo-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-demo-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 16px;
+        }
+
+        .cta-demo-subtitle {
+            font-size: 1.2rem;
+            opacity: 0.95;
+            margin-bottom: 28px;
+            line-height: 1.6;
+        }
+
+        .cta-features {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            flex-wrap: wrap;
+            margin-bottom: 28px;
+        }
+
+        .exam-highlight-box {
+            color: white;
+            padding: 32px;
+            border-radius: var(--border-radius);
+            margin-top: 32px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .exam-showcase.ielts .exam-highlight-box { background: var(--ielts-gradient); }
+        .exam-showcase.gre .exam-highlight-box { background: var(--gre-gradient); }
+        .exam-showcase.sat .exam-highlight-box { background: var(--sat-gradient); }
+        .exam-showcase.pte .exam-highlight-box { background: var(--pte-gradient); }
+        .exam-showcase.toefl .exam-highlight-box { background: var(--toefl-gradient); }
+
+        .exam-highlight-box h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 16px;
+        }
+
+        .exam-highlight-box p {
+            font-size: 1.2rem;
+            line-height: 1.7;
+            opacity: 0.95;
+        }
+
+        /* Benefit Cards */
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin: 30px 0;
+        }
+
+        .benefit-card {
+            background: var(--card-bg);
+            border: 2px solid #e0e7ff;
+            border-radius: 15px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .benefit-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-soft);
+            border-color: #667eea;
+        }
+
+        .benefit-number {
+            background: var(--primary-gradient);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .benefit-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 10px;
+        }
+
+        .benefit-description {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Grid Systems */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 32px;
+            margin: 40px 0;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin: 40px 0;
+        }
+
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 40px 0;
+        }
+
+        /* Navigation */
+        .navigation {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 9998;
+            box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-button {
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .nav-button:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .slide-indicator {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 12px 28px;
+            border-radius: 50px;
+            font-weight: 700;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .grid-2, .grid-3, .grid-4 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .slide {
+                padding: 20px;
+            }
+            
+            .exam-showcase {
+                padding: 24px;
+            }
+            
+            .exam-title {
+                font-size: 3rem;
+            }
+            
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+        }
+
+        .mb-4 { margin-bottom: 32px; }
+        .mt-4 { margin-top: 32px; }
+        .text-center { text-align: center; }
+
+        /* Highlight Box */
+        .highlight-box {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .highlight-box h3 {
+            font-size: 1.8em;
+            margin-bottom: 15px;
+        }
+
+        .highlight-box p {
+            font-size: 1.2em;
+            opacity: 0.95;
+        }
+
+        /* Scrollbar */
+        .slide::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .slide::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 10px;
+        }
+
+        .slide::-webkit-scrollbar-thumb {
+            background: rgba(102, 126, 234, 0.5);
+            border-radius: 10px;
+        }
+
+        .slide::-webkit-scrollbar-thumb:hover {
+            background: rgba(102, 126, 234, 0.8);
+        }
+   
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
         
         * {
@@ -914,7 +1757,7 @@
         }
 
         /* Specific flag backgrounds for each country */
-        .language-card.usa::before {
+        /* .language-card.usa::before {
             background-image: url('https://flagcdn.com/w640/us.png');
         }
 
@@ -936,7 +1779,7 @@
 
         .language-card.newzealand::before {
             background-image: url('https://flagcdn.com/w640/nz.png');
-        }
+        } */
 
         .language-flag {
             font-size: 2.5em;
@@ -1384,10 +2227,10 @@
                 <div class="kanan-tagline">Let's Grow Globally - From India to the World</div>
                 <div style="margin-top: 20px; position: relative; z-index: 1;">
                     <div style="font-family: 'Noto Sans Devanagari', sans-serif; font-size: 1.4em; font-weight: 700; margin: 10px 0; color: #fbbf24;">
-                        व्यक्तिगत ध्यान से सफलता की गारंटी
+हर छात्र पर व्यक्तिगत ध्यान, सफलता का आश्वासन।
                     </div>
                     <div style="font-family: 'Noto Sans Devanagari', sans-serif; font-size: 1.3em; font-weight: 600; margin: 10px 0; color: #fcd34d;">
-                        વ્યક્તિગત ધ્યાનથી સફળતાની ખાતરી
+                        તમારી પ્રગતિ, અમારી જવાબદારી.
                     </div>
                 </div>
             </div>
@@ -1828,6 +2671,637 @@
                 <p style="font-size: 1.4em; line-height: 1.6; opacity: 0.95;">
                     "We combine cutting-edge learning science with timeless human values: understanding, patience, encouragement, and belief in every student's potential. Science guides our method, but human connection drives our success."
                 </p>
+            </div>
+        </div>
+
+        <!-- for new courses -->
+
+        <!-- slide 4 for ielts -->
+         <div class="slide">
+            <div class="exam-showcase ielts">
+                <div class="exam-header">
+                    <div class="exam-title-group">
+                        <div class="exam-title">IELTS</div>
+                        <div class="exam-full-name">International English Language Testing System</div>
+                        <div class="exam-conducted-by">Conducted by British Council, IDP & Cambridge</div>
+                    </div>
+                    
+                    <div class="exam-quick-stats">
+                        <div class="exam-quick-stat">
+                            <span class="exam-quick-stat-number">2h 45m</span>
+                            <span class="exam-quick-stat-label">Test Duration</span>
+                        </div>
+                        <div class="exam-quick-stat">
+                            <span class="exam-quick-stat-number">0-9</span>
+                            <span class="exam-quick-stat-label">Band Score</span>
+                        </div>
+                        <div class="exam-quick-stat">
+                            <span class="exam-quick-stat-number">₹17,000</span>
+                            <span class="exam-quick-stat-label">Test Fee</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="exam-structure">
+                    <div class="exam-structure-card">
+                        <div class="exam-structure-icon">👂</div>
+                        <div class="exam-structure-title">Listening</div>
+                        <div class="exam-structure-details">
+                            <strong>Duration:</strong> 30 min + 10 min transfer<br>
+                            <strong>Questions:</strong> 40 questions<br>
+                            <strong>Sections:</strong> 4 sections<br><br>
+                            Tests ability to understand spoken English in academic and everyday contexts.
+                        </div>
+                    </div>
+
+                    <div class="exam-structure-card">
+                        <div class="exam-structure-icon">📖</div>
+                        <div class="exam-structure-title">Reading</div>
+                        <div class="exam-structure-details">
+                            <strong>Duration:</strong> 60 minutes<br>
+                            <strong>Questions:</strong> 40 questions<br>
+                            <strong>Passages:</strong> 3 long passages<br><br>
+                            Tests reading comprehension, vocabulary and understanding of complex texts.
+                        </div>
+                    </div>
+
+                    <div class="exam-structure-card">
+                        <div class="exam-structure-icon">✍️</div>
+                        <div class="exam-structure-title">Writing</div>
+                        <div class="exam-structure-details">
+                            <strong>Duration:</strong> 60 minutes<br>
+                            <strong>Tasks:</strong> 2 tasks<br>
+                            <strong>Words:</strong> 150 + 250 words<br><br>
+                            Task 1: Describe visual information. Task 2: Essay on given topic.
+                        </div>
+                    </div>
+
+                    <div class="exam-structure-card">
+                        <div class="exam-structure-icon">🗣️</div>
+                        <div class="exam-structure-title">Speaking</div>
+                        <div class="exam-structure-details">
+                            <strong>Duration:</strong> 11-14 minutes<br>
+                            <strong>Parts:</strong> 3 parts<br>
+                            <strong>Format:</strong> Face-to-face<br><br>
+                            Tests spoken English through introduction, cue card and discussion.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="exam-highlight-box">
+                    <h3>Why IELTS with Personalized Coaching at Kanan.co?</h3>
+                    <p>
+                        IELTS is the world's most popular English language test. With our one-on-one coaching, students achieve 7.0+ bands in their first attempt, opening doors to top universities worldwide.
+                    </p>
+                </div>
+            </div>
+
+            <div class="solid-card" style="background: linear-gradient(135deg, #fff5f5, #fed7d7); border-left: 5px solid #667eea; margin-top: 32px;">
+                <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 2.2rem; color: #667eea; margin-bottom: 24px; text-align: center;">Our Personalized IELTS Strategy</h3>
+                
+                <div style="background: white; padding: 28px; border-radius: 16px; margin-bottom: 28px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+                    <h4 style="color: var(--text-primary); font-size: 1.6rem; margin-bottom: 16px; font-weight: 800;">Why Personalized IELTS Coaching is Essential</h4>
+                    <p style="color: var(--text-secondary); line-height: 1.9; font-size: 1.1rem; margin-bottom: 20px;">
+                        IELTS isn't just about English knowledge—it's about <strong style="color: #667eea;">exam strategy, time management, and confidence</strong>. Every student has unique strengths. Our personalized approach identifies YOUR specific challenges and transforms them into strengths.
+                    </p>
+                    
+                    <div style="background: linear-gradient(135deg, #fef3c7, #fde68a); padding: 20px; border-radius: 12px; border-left: 4px solid #f59e0b;">
+                        <p style="color: #78350f; font-size: 1.15rem; line-height: 1.8; font-weight: 600;">
+                            <strong>What Makes Our IELTS Coaching Unique:</strong> We make IELTS preparation engaging and targeted. Each session focuses on YOUR weak modules with real-time feedback and strategy optimization for YOUR learning style.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="grid-2" style="margin-bottom: 28px;">
+                    <div class="modern-card color-1">
+                        <div class="modern-card-icon">
+                            <span style="font-size: 2rem;">👂</span>
+                        </div>
+                        <h4 class="modern-card-title">Personalized Listening Mastery</h4>
+                        <div class="modern-card-details">
+                            <div style="margin-bottom: 10px;"><strong>✓ Accent training:</strong> Practice with British, American, Australian accents</div>
+                            <div style="margin-bottom: 10px;"><strong>✓ Note-taking strategies:</strong> YOUR personal shorthand system</div>
+                            <div style="margin-bottom: 10px;"><strong>✓ Focus building:</strong> Train YOUR concentration for 30+ minutes</div>
+                            <div style="margin-bottom: 10px;"><strong>✓ Answer prediction:</strong> Learn to anticipate answers</div>
+                        </div>
+                    </div>
+                    
+                    <div class="modern-card color-2">
+                        <div class="modern-card-icon">
+                            <span style="font-size: 2rem;">📖</span>
+                        </div>
+                        <h4 class="modern-card-title">Personalized Reading Excellence</h4>
+                        <div class="modern-card-details">
+                            <div style="margin-bottom: 10px;"><strong>✓ Speed reading techniques:</strong> Match YOUR reading pace</div>
+                            <div style="margin-bottom: 10px;"><strong>✓ Skimming & scanning:</strong> Find information quickly</div>
+                            <div style="margin-bottom: 10px;"><strong>✓ Vocabulary building:</strong> Focus on YOUR gaps</div>
+                            <div style="margin-bottom: 10px;"><strong>✓ Paragraph headings:</strong> Master the trickiest questions</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid-2">
+                    <div class="modern-card color-3">
+                        <div class="modern-card-icon">
+                            <span style="font-size: 2rem;">✍️</span>
+                        </div>
+                        <h4 class="modern-card-title">Personalized Writing Coaching</h4>
+                        <div class="modern-card-details">
+                            <div style="margin-bottom: 10px;"><strong>✓ Task 1 templates:</strong> YOUR personal structure</div>
+                            <div style="margin-bottom: 10px;"><strong>✓ Task 2 strategies:</strong> Build arguments YOUR way</div>
+                            <div style="margin-bottom: 10px;"><strong>✓ Grammar correction:</strong> Fix YOUR specific errors</div>
+                            <div style="margin-bottom: 10px;"><strong>✓ Daily feedback:</strong> Improve with every essay</div>
+                        </div>
+                    </div>
+
+                    <div class="modern-card color-4">
+                        <div class="modern-card-icon">
+                            <span style="font-size: 2rem;">🗣️</span>
+                        </div>
+                        <h4 class="modern-card-title">Personalized Speaking Training</h4>
+                        <div class="modern-card-details">
+                            <div style="margin-bottom: 10px;"><strong>✓ Confidence building:</strong> Overcome YOUR hesitation</div>
+                            <div style="margin-bottom: 10px;"><strong>✓ Fluency development:</strong> Think in English naturally</div>
+                            <div style="margin-bottom: 10px;"><strong>✓ Pronunciation polish:</strong> Clear accent refinement</div>
+                            <div style="margin-bottom: 10px;"><strong>✓ Cue card mastery:</strong> 2-minute speech confidence</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background: linear-gradient(135deg, #667eea, #764ba2); padding: 32px; border-radius: 20px; color: white; text-align: center; margin-top: 28px;">
+                    <h4 style="font-size: 2rem; margin-bottom: 16px; font-weight: 800;">The Personalized Advantage</h4>
+                    <div class="grid-3">
+                        <div>
+                            <div style="font-size: 3rem; font-weight: 900; margin-bottom: 8px;">7.5+</div>
+                            <div style="font-size: 1.1rem; opacity: 0.95;">Average Band Score</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 3rem; font-weight: 900; margin-bottom: 8px;">30 Days</div>
+                            <div style="font-size: 1.1rem; opacity: 0.95;">To Target Score</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 3rem; font-weight: 900; margin-bottom: 8px;">1:1</div>
+                            <div style="font-size: 1.1rem; opacity: 0.95;">Your Dedicated Mentor</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- slide 5 for d sat -->
+          <div class="slide">
+            <div class="exam-showcase sat">
+                <div class="exam-header">
+                    <div class="exam-title-group">
+                        <div class="exam-title">D-SAT</div>
+                        <div class="exam-full-name">Digital Scholastic Assessment Test</div>
+                        <div class="exam-conducted-by">Conducted by College Board</div>
+                    </div>
+                    
+                    <div class="exam-quick-stats">
+                        <div class="exam-quick-stat">
+                            <span class="exam-quick-stat-number">2h 14m</span>
+                            <span class="exam-quick-stat-label">Test Duration</span>
+                        </div>
+                        <div class="exam-quick-stat">
+                            <span class="exam-quick-stat-number">400-1600</span>
+                            <span class="exam-quick-stat-label">Score Range</span>
+                        </div>
+                        <div class="exam-quick-stat">
+                            <span class="exam-quick-stat-number">$60</span>
+                            <span class="exam-quick-stat-label">Test Fee</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="exam-structure">
+                    <div class="exam-structure-card">
+                        <div class="exam-structure-icon">📚</div>
+                        <div class="exam-structure-title">Reading & Writing</div>
+                        <div class="exam-structure-details">
+                            <strong>Duration:</strong> 64 minutes<br>
+                            <strong>Questions:</strong> 54 questions<br>
+                            <strong>Modules:</strong> 2 adaptive modules<br><br>
+                            Tests reading comprehension, vocabulary in context, and grammar skills with adaptive difficulty.
+                        </div>
+                    </div>
+
+                    <div class="exam-structure-card">
+                        <div class="exam-structure-icon">🔢</div>
+                        <div class="exam-structure-title">Math</div>
+                        <div class="exam-structure-details">
+                            <strong>Duration:</strong> 70 minutes<br>
+                            <strong>Questions:</strong> 44 questions<br>
+                            <strong>Modules:</strong> 2 adaptive modules<br><br>
+                            Tests algebra, problem-solving, data analysis and advanced math concepts adaptively.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cta-demo-section">
+                    <div class="cta-demo-content">
+                        <div class="cta-demo-title">Experience Our SAT Platform Live!</div>
+                        <div class="cta-demo-subtitle">
+                            Practice with our adaptive Digital SAT simulation platform and see personalized learning in action
+                        </div>
+                        
+                        <div class="cta-features">
+                            <div style="background: rgba(56, 189, 248, 0.2); padding: 12px 24px; border-radius: 50px; border: 2px solid #38bdf8; display: flex; align-items: center; gap: 8px;">
+                                <i class="fas fa-laptop-code" style="color: #38bdf8; font-size: 1.2rem;"></i>
+                                <span style="color: #38bdf8; font-weight: 700; font-size: 1.05rem;">Adaptive Testing</span>
+                            </div>
+                            <div style="background: rgba(251, 146, 60, 0.2); padding: 12px 24px; border-radius: 50px; border: 2px solid #fb923c; display: flex; align-items: center; gap: 8px;">
+                                <i class="fas fa-chart-line" style="color: #fb923c; font-size: 1.2rem;"></i>
+                                <span style="color: #fb923c; font-weight: 700; font-size: 1.05rem;">Real SAT Engine</span>
+                            </div>
+                            <div style="background: rgba(52, 211, 153, 0.2); padding: 12px 24px; border-radius: 50px; border: 2px solid #34d399; display: flex; align-items: center; gap: 8px;">
+                                <i class="fas fa-brain" style="color: #34d399; font-size: 1.2rem;"></i>
+                                <span style="color: #34d399; font-weight: 700; font-size: 1.05rem;">Smart Practice</span>
+                            </div>
+                        </div>
+
+                        <a href="https://portal.kananprep.com/" target="_blank" class="cta-button">
+                            <i class="fas fa-play-circle"></i>
+                            Access Live Demo & Test Simulation
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                        
+                        <div style="margin-top: 20px; font-size: 0.95rem; opacity: 0.9;">
+                            <i class="fas fa-check-circle"></i> No registration required • Instant access • Full feature preview
+                        </div>
+                    </div>
+                </div>
+
+                <div class="exam-highlight-box">
+                    <h3>Digital SAT - The Future is Personalized</h3>
+                    <p>
+                        The new Digital SAT is shorter, adaptive, and computer-based. Our personalized coaching helps students master the adaptive format and achieve 1400+ scores for admission to top US universities. One-on-one training ensures you understand every question type and strategy.
+                    </p>
+                </div>
+            </div>
+
+            <div class="solid-card" style="background: linear-gradient(135deg, #fdf4ff, #fae8ff); border-left: 5px solid #f093fb; margin-top: 32px;">
+                <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 2.2rem; color: #f093fb; margin-bottom: 24px; text-align: center;">Our Personalized SAT Strategy</h3>
+                
+                <div class="grid-2">
+                    <div class="modern-card color-5">
+                        <div class="modern-card-icon">
+                            <span style="font-size: 2rem;">📚</span>
+                        </div>
+                        <h4 class="modern-card-title">Personalized Reading & Writing</h4>
+                        <div class="modern-card-details">
+                            <div style="margin-bottom: 10px;"><strong>✓ Adaptive practice:</strong> Questions adjust to YOUR level</div>
+                            <div style="margin-bottom: 10px;"><strong>✓ Grammar mastery:</strong> Fix YOUR specific errors</div>
+                            <div style="margin-bottom: 10px;"><strong>✓ Reading strategies:</strong> Evidence-based approach</div>
+                            <div style="margin-bottom: 10px;"><strong>✓ Vocabulary in context:</strong> Learn through examples</div>
+                        </div>
+                    </div>
+
+                    <div class="modern-card color-6">
+                        <div class="modern-card-icon">
+                            <span style="font-size: 2rem;">🔢</span>
+                        </div>
+                        <h4 class="modern-card-title">Personalized Math Excellence</h4>
+                        <div class="modern-card-details">
+                            <div style="margin-bottom: 10px;"><strong>✓ Concept building:</strong> Strong foundation in YOUR weak areas</div>
+                            <div style="margin-bottom: 10px;"><strong>✓ Calculator strategies:</strong> When and how to use it</div>
+                            <div style="margin-bottom: 10px;"><strong>✓ Mental math:</strong> Speed techniques for YOUR style</div>
+                            <div style="margin-bottom: 10px;"><strong>✓ Problem-solving:</strong> Multi-step question mastery</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background: linear-gradient(135deg, #f093fb, #f5576c); padding: 32px; border-radius: 20px; color: white; text-align: center; margin-top: 28px;">
+                    <h4 style="font-size: 2rem; margin-bottom: 16px; font-weight: 800;">Target Score Achievement</h4>
+                    <div class="grid-3">
+                        <div>
+                            <div style="font-size: 3rem; font-weight: 900; margin-bottom: 8px;">1450+</div>
+                            <div style="font-size: 1.1rem; opacity: 0.95;">Average Score</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 3rem; font-weight: 900; margin-bottom: 8px;">45 Days</div>
+                            <div style="font-size: 1.1rem; opacity: 0.95;">Preparation Time</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 3rem; font-weight: 900; margin-bottom: 8px;">95%</div>
+                            <div style="font-size: 1.1rem; opacity: 0.95;">First Attempt Success</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- slide 6 for course -->
+          <!-- SLIDE 5: GRE - EXISTING BEST FORMAT -->
+        <div class="slide">
+            <div class="exam-showcase gre">
+                <div class="exam-header">
+                    <div class="exam-title-group">
+                        <div class="exam-title">GRE</div>
+                        <div class="exam-full-name">Graduate Record Examination</div>
+                        <div class="exam-conducted-by">Conducted by ETS</div>
+                    </div>
+                    
+                    <div class="exam-quick-stats">
+                        <div class="exam-quick-stat">
+                            <span class="exam-quick-stat-number">3h 45m</span>
+                            <span class="exam-quick-stat-label">Test Duration</span>
+                        </div>
+                        <div class="exam-quick-stat">
+                            <span class="exam-quick-stat-number">260-340</span>
+                            <span class="exam-quick-stat-label">Score Range</span>
+                        </div>
+                        <div class="exam-quick-stat">
+                            <span class="exam-quick-stat-number">$220</span>
+                            <span class="exam-quick-stat-label">Test Fee</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="exam-structure">
+                    <div class="exam-structure-card">
+                        <div class="exam-structure-icon">✍️</div>
+                        <div class="exam-structure-title">Analytical Writing</div>
+                        <div class="exam-structure-details">
+                            <strong>Duration:</strong> 60 minutes<br>
+                            <strong>Tasks:</strong> 2 essays<br>
+                            <strong>Score:</strong> 0-6 scale<br><br>
+                            Analyze an issue and analyze an argument. Tests critical thinking and analytical writing.
+                        </div>
+                    </div>
+
+                    <div class="exam-structure-card">
+                        <div class="exam-structure-icon">📊</div>
+                        <div class="exam-structure-title">Quantitative Reasoning</div>
+                        <div class="exam-structure-details">
+                            <strong>Duration:</strong> 70 minutes<br>
+                            <strong>Questions:</strong> 40 questions<br>
+                            <strong>Score:</strong> 130-170 scale<br><br>
+                            Arithmetic, algebra, geometry, data analysis. Tests mathematical reasoning.
+                        </div>
+                    </div>
+
+                    <div class="exam-structure-card">
+                        <div class="exam-structure-icon">📚</div>
+                        <div class="exam-structure-title">Verbal Reasoning</div>
+                        <div class="exam-structure-details">
+                            <strong>Duration:</strong> 60 minutes<br>
+                            <strong>Questions:</strong> 40 questions<br>
+                            <strong>Score:</strong> 130-170 scale<br><br>
+                            Reading comprehension, text completion. Tests vocabulary and analytical skills.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cta-demo-section">
+                    <div class="cta-demo-content">
+                        <div class="cta-demo-title">Experience Our GRE Platform Live!</div>
+                        <div class="cta-demo-subtitle">
+                            Get hands-on with our advanced GRE Test Engine Simulation and see personalized learning in action
+                        </div>
+                        
+                        <div class="cta-features">
+                            <div style="background: rgba(56, 189, 248, 0.2); padding: 12px 24px; border-radius: 50px; border: 2px solid #38bdf8; display: flex; align-items: center; gap: 8px;">
+                                <i class="fas fa-laptop-code" style="color: #38bdf8; font-size: 1.2rem;"></i>
+                                <span style="color: #38bdf8; font-weight: 700; font-size: 1.05rem;">Live Online Platform</span>
+                            </div>
+                            <div style="background: rgba(251, 146, 60, 0.2); padding: 12px 24px; border-radius: 50px; border: 2px solid #fb923c; display: flex; align-items: center; gap: 8px;">
+                                <i class="fas fa-chart-line" style="color: #fb923c; font-size: 1.2rem;"></i>
+                                <span style="color: #fb923c; font-weight: 700; font-size: 1.05rem;">Real GRE Test Engine</span>
+                            </div>
+                            <div style="background: rgba(52, 211, 153, 0.2); padding: 12px 24px; border-radius: 50px; border: 2px solid #34d399; display: flex; align-items: center; gap: 8px;">
+                                <i class="fas fa-brain" style="color: #34d399; font-size: 1.2rem;"></i>
+                                <span style="color: #34d399; font-weight: 700; font-size: 1.05rem;">Adaptive Practice</span>
+                            </div>
+                        </div>
+
+                        <a href="https://portal.kananprep.com/" target="_blank" class="cta-button">
+                            <i class="fas fa-play-circle"></i>
+                            Access Live Demo & Test Simulation
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                        
+                        <div style="margin-top: 20px; font-size: 0.95rem; opacity: 0.9;">
+                            <i class="fas fa-check-circle"></i> No registration required • Instant access • Full feature preview
+                        </div>
+                    </div>
+                </div>
+
+                <div class="exam-highlight-box">
+                    <h3>Why GRE Matters for Indian Students</h3>
+                    <p>
+                        The GRE is essential for graduate admissions in top US universities. A strong GRE score (320+) opens doors to Ivy League schools, substantial scholarships, and TA/RA opportunities. With personalized preparation, our students consistently score in the 90th percentile.
+                    </p>
+                </div>
+            </div>
+
+            <div class="solid-card" style="background: linear-gradient(135deg, #fff5f5, #fed7d7); border-left: 5px solid #c44569; margin-top: 32px;">
+                <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 2.2rem; color: #c44569; margin-bottom: 24px; text-align: center;">Our Personalized GRE Strategy</h3>
+                
+                <div style="background: white; padding: 28px; border-radius: 16px; margin-bottom: 28px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+                    <h4 style="color: var(--text-primary); font-size: 1.6rem; margin-bottom: 16px; font-weight: 800;">Why Personalized GRE Coaching is a Game-Changer</h4>
+                    <p style="color: var(--text-secondary); line-height: 1.9; font-size: 1.1rem; margin-bottom: 20px;">
+                        GRE is not just about knowledge—it's about <strong style="color: #c44569;">strategy, timing, and mental stamina</strong>. Every student has unique strengths and weaknesses. Our personalized approach identifies YOUR specific challenges and transforms them into strengths.
+                    </p>
+                    
+                    <div style="background: linear-gradient(135deg, #fef3c7, #fde68a); padding: 20px; border-radius: 12px; border-left: 4px solid #f59e0b;">
+                        <p style="color: #78350f; font-size: 1.15rem; line-height: 1.8; font-weight: 600;">
+                            <strong>What Makes Our GRE Coaching Interesting:</strong> We make GRE preparation an engaging journey. Each session is tailored to your learning style, with real-time strategy adjustments based on your performance. You'll discover hidden patterns and build confidence.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="grid-2" style="margin-bottom: 28px;">
+                    <div class="modern-card color-1">
+                        <div class="modern-card-icon">
+                            <span style="font-size: 2rem;">📊</span>
+                        </div>
+                        <h4 class="modern-card-title">Personalized Quantitative Mastery</h4>
+                        <div class="modern-card-details">
+                            <div style="margin-bottom: 10px;"><strong>✓ Diagnostic-based learning:</strong> Identify YOUR math gaps</div>
+                            <div style="margin-bottom: 10px;"><strong>✓ Customized problem sets:</strong> Focus on YOUR challenges</div>
+                            <div style="margin-bottom: 10px;"><strong>✓ Speed building:</strong> Personal timing strategies</div>
+                            <div style="margin-bottom: 10px;"><strong>✓ Mental math shortcuts:</strong> Tailored to YOUR style</div>
+                        </div>
+                    </div>
+                    
+                    <div class="modern-card color-2">
+                        <div class="modern-card-icon">
+                            <span style="font-size: 2rem;">📚</span>
+                        </div>
+                        <h4 class="modern-card-title">Personalized Verbal Excellence</h4>
+                        <div class="modern-card-details">
+                            <div style="margin-bottom: 10px;"><strong>✓ Custom vocabulary:</strong> Words YOU struggle with</div>
+                            <div style="margin-bottom: 10px;"><strong>✓ Reading strategies:</strong> Tailored to YOUR speed</div>
+                            <div style="margin-bottom: 10px;"><strong>✓ Context learning:</strong> Examples from YOUR interests</div>
+                            <div style="margin-bottom: 10px;"><strong>✓ Critical reasoning:</strong> Build YOUR thinking</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background: linear-gradient(135deg, #ff6b6b, #c44569); padding: 32px; border-radius: 20px; color: white; text-align: center;">
+                    <h4 style="font-size: 2rem; margin-bottom: 16px; font-weight: 800;">The Personalized Advantage</h4>
+                    <div class="grid-3">
+                        <div>
+                            <div style="font-size: 3rem; font-weight: 900; margin-bottom: 8px;">320+</div>
+                            <div style="font-size: 1.1rem; opacity: 0.95;">Average Score</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 3rem; font-weight: 900; margin-bottom: 8px;">40%</div>
+                            <div style="font-size: 1.1rem; opacity: 0.95;">Faster Preparation</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 3rem; font-weight: 900; margin-bottom: 8px;">1:1</div>
+                            <div style="font-size: 1.1rem; opacity: 0.95;">Dedicated Mentor</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- slide for course next  -->
+          <!-- SLIDE 6: PTE - NEW FORMAT -->
+        <div class="slide">
+            <div class="exam-showcase pte">
+                <div class="exam-header">
+                    <div class="exam-title-group">
+                        <div class="exam-title">PTE</div>
+                        <div class="exam-full-name">Pearson Test of English Academic</div>
+                        <div class="exam-conducted-by">Conducted by Pearson</div>
+                    </div>
+                    
+                    <div class="exam-quick-stats">
+                        <div class="exam-quick-stat">
+                            <span class="exam-quick-stat-number">2 hours</span>
+                            <span class="exam-quick-stat-label">Test Duration</span>
+                        </div>
+                        <div class="exam-quick-stat">
+                            <span class="exam-quick-stat-number">10-90</span>
+                            <span class="exam-quick-stat-label">Score Range</span>
+                        </div>
+                        <div class="exam-quick-stat">
+                            <span class="exam-quick-stat-number">₹17,000</span>
+                            <span class="exam-quick-stat-label">Test Fee</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="exam-structure">
+                    <div class="exam-structure-card">
+                        <div class="exam-structure-icon">🎤</div>
+                        <div class="exam-structure-title">Speaking & Writing</div>
+                        <div class="exam-structure-details">
+                            <strong>Duration:</strong> 77-93 minutes<br>
+                            <strong>Questions:</strong> Multiple integrated tasks<br>
+                            <strong>Type:</strong> Computer-based<br><br>
+                            Read aloud, repeat sentences, describe images, essay writing - all computer scored.
+                        </div>
+                    </div>
+
+                    <div class="exam-structure-card">
+                        <div class="exam-structure-icon">📖</div>
+                        <div class="exam-structure-title">Reading</div>
+                        <div class="exam-structure-details">
+                            <strong>Duration:</strong> 32-40 minutes<br>
+                            <strong>Questions:</strong> Multiple choice & fill blanks<br>
+                            <strong>Type:</strong> Computer-based<br><br>
+                            Reading comprehension, vocabulary, and grammar tested through various formats.
+                        </div>
+                    </div>
+
+                    <div class="exam-structure-card">
+                        <div class="exam-structure-icon">👂</div>
+                        <div class="exam-structure-title">Listening</div>
+                        <div class="exam-structure-details">
+                            <strong>Duration:</strong> 45-57 minutes<br>
+                            <strong>Questions:</strong> Multiple integrated tasks<br>
+                            <strong>Type:</strong> Computer-based<br><br>
+                            Summarize spoken text, multiple choice, fill blanks - comprehensive listening skills.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="exam-highlight-box">
+                    <h3>Why PTE with Personalized Coaching?</h3>
+                    <p>
+                        PTE is 100% computer-based and scored. Our personalized coaching helps you master the AI scoring algorithm, pronunciation techniques, and computer interface to achieve 70+ scores consistently in your first attempt.
+                    </p>
+                </div>
+            </div>
+
+            <div class="solid-card" style="background: linear-gradient(135deg, #f0f9ff, #e0f2fe); border-left: 5px solid #4facfe; margin-top: 32px;">
+                <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 2.2rem; color: #4facfe; margin-bottom: 24px; text-align: center;">Our Personalized PTE Strategy</h3>
+                
+                <div class="grid-2">
+                    <div class="modern-card color-2">
+                        <div class="modern-card-icon">
+                            <span style="font-size: 2rem;">🎤</span>
+                        </div>
+                        <h4 class="modern-card-title">Personalized Speaking Training</h4>
+                        <div class="modern-card-details">
+                            <div style="margin-bottom: 10px;"><strong>✓ AI scoring understanding:</strong> Know what computer wants</div>
+                            <div style="margin-bottom: 10px;"><strong>✓ Pronunciation polish:</strong> Fix YOUR specific errors</div>
+                            <div style="margin-bottom: 10px;"><strong>✓ Template mastery:</strong> Describe image frameworks</div>
+                            <div style="margin-bottom: 10px;"><strong>✓ Fluency building:</strong> Speak without hesitation</div>
+                        </div>
+                    </div>
+
+                    <div class="modern-card color-3">
+                        <div class="modern-card-icon">
+                            <span style="font-size: 2rem;">✍️</span>
+                        </div>
+                        <h4 class="modern-card-title">Personalized Writing Mastery</h4>
+                        <div class="modern-card-details">
+                            <div style="margin-bottom: 10px;"><strong>✓ Essay templates:</strong> Proven structures that score</div>
+                            <div style="margin-bottom: 10px;"><strong>✓ Summarize written text:</strong> 1-sentence perfection</div>
+                            <div style="margin-bottom: 10px;"><strong>✓ Grammar correction:</strong> Zero errors in YOUR writing</div>
+                            <div style="margin-bottom: 10px;"><strong>✓ Typing speed:</strong> Improve YOUR efficiency</div>
+                        </div>
+                    </div>
+
+                    <div class="modern-card color-1">
+                        <div class="modern-card-icon">
+                            <span style="font-size: 2rem;">📖</span>
+                        </div>
+                        <h4 class="modern-card-title">Personalized Reading Excellence</h4>
+                        <div class="modern-card-details">
+                            <div style="margin-bottom: 10px;"><strong>✓ Multiple choice:</strong> Elimination strategies</div>
+                            <div style="margin-bottom: 10px;"><strong>✓ Fill in blanks:</strong> Collocation mastery</div>
+                            <div style="margin-bottom: 10px;"><strong>✓ Reorder paragraphs:</strong> Logical flow understanding</div>
+                            <div style="margin-bottom: 10px;"><strong>✓ Speed techniques:</strong> Fast and accurate reading</div>
+                        </div>
+                    </div>
+
+                    <div class="modern-card color-4">
+                        <div class="modern-card-icon">
+                            <span style="font-size: 2rem;">👂</span>
+                        </div>
+                        <h4 class="modern-card-title">Personalized Listening Training</h4>
+                        <div class="modern-card-details">
+                            <div style="margin-bottom: 10px;"><strong>✓ Summarize spoken:</strong> Quick comprehension</div>
+                            <div style="margin-bottom: 10px;"><strong>✓ Fill in blanks:</strong> Listen for keywords</div>
+                            <div style="margin-bottom: 10px;"><strong>✓ Write from dictation:</strong> Perfect spelling</div>
+                            <div style="margin-bottom: 10px;"><strong>✓ Accent training:</strong> Understand all accents</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background: linear-gradient(135deg, #4facfe, #00f2fe); padding: 32px; border-radius: 20px; color: white; text-align: center; margin-top: 28px;">
+                    <h4 style="font-size: 2rem; margin-bottom: 16px; font-weight: 800;">PTE Success Metrics</h4>
+                    <div class="grid-3">
+                        <div>
+                            <div style="font-size: 3rem; font-weight: 900; margin-bottom: 8px;">75+</div>
+                            <div style="font-size: 1.1rem; opacity: 0.95;">Average Score</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 3rem; font-weight: 900; margin-bottom: 8px;">20 Days</div>
+                            <div style="font-size: 1.1rem; opacity: 0.95;">Fastest Result</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 3rem; font-weight: 900; margin-bottom: 8px;">98%</div>
+                            <div style="font-size: 1.1rem; opacity: 0.95;">First Attempt Success</div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -2466,7 +3940,7 @@
         </div>
 
         <!-- Slide 10: Investment & Pricing -->
-        <div class="slide" data-notes="Present pricing as investment in future earning potential. Emphasize value compared to typical Indian coaching centers. Mention payment flexibility and different options for different budgets. Position this as family investment that pays lifelong dividends. Reference the scientific methodology as justification for premium pricing.">
+        <!-- <div class="slide" data-notes="Present pricing as investment in future earning potential. Emphasize value compared to typical Indian coaching centers. Mention payment flexibility and different options for different budgets. Position this as family investment that pays lifelong dividends. Reference the scientific methodology as justification for premium pricing.">
             <h1>Investment in Your Scientifically-Proven Future</h1>
             
             <div style="background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%); color: white; padding: 30px; border-radius: 15px; margin: 30px 0; text-align: center;">
@@ -2621,9 +4095,9 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> -->
 
-        <!-- Slide 11: Our Centers - Local Presence, Global Dreams -->
+        <!-- Slide 11: Our Centers - Local Presence, Global Dreams
         <div class="slide" data-notes="Emphasize accessibility and convenience for Indian families. Mention the 24/7 helpline which is crucial for Indian parents who want immediate support. Build trust through established presence across Vadodara. Position as your local partner for global dreams with scientific methods.">
             <h1>Your Local Partner for Global Dreams</h1>
             
@@ -2642,8 +4116,8 @@
                 </p>
             </div>
 
-            <!-- Replace the contact cards section in Slide 11 with this: -->
-            <div style="display: flex; flex-direction: column; align-items: center;">
+            Replace the contact cards section in Slide 11 with this: -->
+            <!-- <div style="display: flex; flex-direction: column; align-items: center;">
                 <div class="contact-card head-office" style="max-width: 290px; width: 100%; margin: 30px 0;">
                     <div style="font-size: 2.5em; margin-bottom: 15px;">🏢</div>
                     <div class="contact-title">HEAD OFFICE</div>
@@ -2756,7 +4230,7 @@
                     </p>
                 </div>
             </div>
-        </div>
+        </div>  -->
 
         <!-- Slide 12: Your Global Success Starts Today -->
         <div class="slide" data-notes="This is your moment of truth. Be confident, assumptive, and create urgency. Remind them about the limited slots, the 96% success rate, the scientific backing, and the life-changing opportunity. Don't ask if they want to join - guide them on how to start immediately. End with inspiration about their global future backed by science.">
@@ -2919,7 +4393,7 @@
             <i class="fas fa-chevron-left"></i> Previous
         </button>
         <div class="slide-indicator">
-            <span id="currentSlide">1</span> / <span id="totalSlides">12</span>
+            <span id="currentSlide">1</span> / <span id="totalSlides">16</span>
         </div>
         <button class="nav-button" id="nextBtn" onclick="changeSlide(1)">
             Next <i class="fas fa-chevron-right"></i>
